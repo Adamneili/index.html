@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phone Addiction Test</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#0f172a,#020617);
+color:white;
+}
+
+.container{
+width:380px;
+background:rgba(30,41,59,0.7);
+backdrop-filter:blur(12px);
+border-radius:18px;
+padding:35px;
+box-shadow:0 20px 60px rgba(0,0,0,0.5);
+text-align:center;
+animation:fadeIn .7s ease;
+}
+
+h1{
+font-size:24px;
+margin-bottom:10px;
+}
+
+.subtitle{
+opacity:.7;
+font-size:14px;
+margin-bottom:20px;
+}
+
+.progress{
+height:6px;
+background:#1e293b;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:25px;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#3b82f6,#06b6d4);
+transition:.4s;
+}
+
+.question{
+font-size:18px;
+margin-bottom:20px;
+}
+
+.option{
+display:block;
+padding:12px;
+border-radius:10px;
+background:#0f172a;
+margin:8px 0;
+cursor:pointer;
+transition:.25s;
+border:2px solid transparent;
+}
+
+.option:hover{
+background:#1e293b;
+border-color:#3b82f6;
+}
+
+.option.selected{
+border:2px solid #ef4444;
+background:#1e293b;
+}
+
+input{
+display:none;
+}
+
+button{
+margin-top:20px;
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:linear-gradient(90deg,#3b82f6,#06b6d4);
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:.3s;
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+.result{
+font-size:20px;
+margin-top:15px;
+}
+
+.score{
+font-size:40px;
+margin:15px 0;
+color:#38bdf8;
+}
+
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(15px)}
+to{opacity:1; transform:translateY(0)}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Phone Addiction Test</h1>
+<p class="subtitle">Discover your phone usage habits</p>
+
+<div class="progress">
+<div class="progress-bar" id="bar"></div>
+</div>
+
+<div id="quiz"></div>
+
+<button onclick="next()">Next</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+const questions=[
+"How often do you check your phone?",
+"Do you use your phone while studying?",
+"Do notifications distract you?",
+"Do you stay awake late on your phone?",
+"Do you feel uncomfortable without your phone?",
+"Do you lose focus because of your phone?"
+]
+
+const answers=["Never","Sometimes","Often","Always"]
+
+let current=0
+let score=0
+
+function loadQuestion(){
+
+let q=questions[current]
+
+let html=`<div class="question">${q}</div>`
+
+answers.forEach((a,i)=>{
+html+=`
+<label class="option">
+<input type="radio" name="ans" value="${i}" onclick="selectOption(this)">
+${a}
+</label>`
+})
+
+document.getElementById("quiz").innerHTML=html
+
+updateBar()
+
+}
+
+function selectOption(el){
+
+document.querySelectorAll(".option").forEach(o=>{
+o.classList.remove("selected")
+})
+
+el.parentElement.classList.add("selected")
+
+}
+
+function next(){
+
+let selected=document.querySelector('input[name="ans"]:checked')
+
+if(!selected)return
+
+score+=parseInt(selected.value)
+
+current++
+
+if(current<questions.length){
+
+loadQuestion()
+
+}else{
+
+showResult()
+
+}
+
+}
+
+function updateBar(){
+
+let percent=(current/questions.length)*100
+
+document.getElementById("bar").style.width=percent+"%"
+
+}
+
+function showResult(){
+
+document.getElementById("quiz").style.display="none"
+
+document.querySelector("button").style.display="none"
+
+updateBar()
+
+let percent=Math.round((score/18)*100)
+
+let text=""
+
+if(percent<35){
+
+text="✅ Healthy phone usage"
+
+}else if(percent<65){
+
+text="⚠️ Moderate phone dependence"
+
+}else{
+
+text="🚨 High phone addiction risk"
+
+}
+
+document.getElementById("result").innerHTML=`
+
+<div class="score">${percent}%</div>
+
+<div class="result">${text}</div>
+
+`
+
+}
+
+loadQuestion()
+
+</script>
+
+</body>
+</html>
